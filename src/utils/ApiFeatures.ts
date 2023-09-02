@@ -1,6 +1,5 @@
 import { Document, Query} from "mongoose";
-import { ApiError } from "./ApiError";
-import { StatusCodes } from "http-status-codes";
+
 
 export interface IQuery {
     sort?: string;

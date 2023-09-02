@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import expressAsyncHandler from "express-async-handler";
 import { ApiError } from "../utils/ApiError";
-import {User} from "../Controllers/user/user.model";
+import { UserModel } from "../Controllers/user/user.model";
 import { StatusCodes } from "http-status-codes";
 import jwt from "jsonwebtoken";
 import { JwtPayload } from "../types/jwt/jwt";
@@ -18,7 +18,7 @@ export const protectedMiddleware = expressAsyncHandler(
         const token = authorization!.split(" ")[1];
         const JWT_SECRET = process.env.JWT_SECRET!;
         const payload = jwt.verify(token, JWT_SECRET) as JwtPayload;
-        const user = await User.findById(payload._id);
+        const user = await UserModel.findById(payload._id);
         if (!user) {
             return next(new ApiError("User Not Found", StatusCodes.NOT_FOUND));
         }

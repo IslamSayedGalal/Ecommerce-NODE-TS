@@ -3,7 +3,7 @@ import expressAsyncHandler from "express-async-handler";
 import { matchedData, validationResult } from "express-validator";
 import { ApiError } from "../utils/ApiError";
 import { ReasonPhrases, StatusCodes } from "http-status-codes";
-import {Role} from "../Controllers/user/user.model";
+import {Role} from "../types/user/user.interface";
 
 export const allowedTo = (...roles: Role[]) => {
     return expressAsyncHandler(
