@@ -14,7 +14,6 @@ export const globalErrorHandler = ( err: ApiError, req: Request, res: Response, 
   const { message, name, stack, statusCodes } = err;
   const dev = process.env.NODE_ENV === "dev" ? { stack } : {};
 
-  // predicted error
   if (statusCodes) {
     return res.status(statusCodes).json({
       statusCode: statusCodes,
@@ -38,7 +37,6 @@ export const globalErrorHandler = ( err: ApiError, req: Request, res: Response, 
   }
 
 
-  // unpredicted error
   res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
     statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
     name,

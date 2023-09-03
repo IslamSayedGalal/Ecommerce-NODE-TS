@@ -1,10 +1,9 @@
 import { Schema, model } from "mongoose";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import { Role, UserDocument } from "../../types/user/user.interface";
+import { Role, UserInterface } from "../../types/user/user.interface";
 
-
-const userSchema = new Schema<UserDocument>(
+const userSchema = new Schema<UserInterface>(
   {
     name: {
       type: String,
@@ -19,7 +18,7 @@ const userSchema = new Schema<UserDocument>(
       required: [true, "Please provide your email"],
       unique: true,
     },
-    phone:{
+    phone: {
       type: String,
       required: [true, "Please provide your phone"],
       unique: true,
@@ -69,11 +68,13 @@ const userSchema = new Schema<UserDocument>(
 
 userSchema.pre("save", async function (next) {
   if (!this.isModified("password")) return next();
-  this.password = await bcrypt.hash(this.password, 12);
+  this.password = await bcrypt.hash(this.password, +process.env.BCRYPT_SALT);
   next();
 });
 
-userSchema.methods.comparePassword = async function (password: string) {
+userSchema.methods.comparePassword = async function ( this: UserInterface, password: string) {
+  if (!this.password) return false;
+
   return await bcrypt.compare(password, this.password);
 };
 
@@ -85,4 +86,4 @@ userSchema.methods.createToken = function () {
   return token;
 };
 
-export const UserModel = model<UserDocument>("User", userSchema);
+export const UserModel = model<UserInterface>("User", userSchema);

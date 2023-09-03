@@ -2,6 +2,7 @@ import { check, body } from "express-validator";
 import { validate } from "../../middleWares/validate";
 import { UserModel } from "../user/user.model";
 import slugify from "slugify";
+import validator from "validator";
 
 export const registerValidator = [
   check("name")
@@ -37,6 +38,7 @@ export const registerValidator = [
       if (user) {
         return Promise.reject("already used");
       }
+      return true;
     }),
   check("password")
     .notEmpty()
@@ -50,11 +52,17 @@ export const registerValidator = [
 
 // login using  (email or phone)
 export const loginValidator = [
-  check("email")
+  check("username")
     .notEmpty()
     .withMessage("is required")
-    .isEmail()
-    .withMessage("not valid format"),
+    .custom(async (value) => {
+      const email = validator.isEmail(value);
+      const phone = validator.isMobilePhone(value,"ar-EG");
+      if (!email && !phone) {
+        return Promise.reject("not valid format");
+      }
+      return true;
+    }),
   check("password")
     .notEmpty()
     .withMessage("is required")

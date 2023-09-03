@@ -7,7 +7,7 @@ export enum Role {
 }
 
 
-export interface UserDocument extends Document {
+export interface UserInterface extends Document {
     name: string;
     slug: string;
     email: string;
@@ -26,9 +26,9 @@ export interface UserDocument extends Document {
       city: string;
       postalCode: string;
     }[];
-    passwordResetCode: string;
-    passwordResetExpires: Date;
-    passwordResetVerified: boolean;
+    passwordResetCode: string | undefined;
+    passwordResetExpires: Date | undefined;
+    passwordResetVerified: boolean | undefined;
     comparePassword: (password: string) => boolean;
     createToken: () => string;
 }
