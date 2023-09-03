@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import expressAsyncHandler from "express-async-handler";
 import { ApiError } from "../utils/ApiError";
-import { UserModel } from "../Controllers/user/user.model";
+import { UserModel } from "../app/user/user.model";
 import { StatusCodes } from "http-status-codes";
 import jwt from "jsonwebtoken";
 import { JwtPayload } from "../types/jwt/jwt";

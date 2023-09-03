@@ -1,5 +1,5 @@
 import { check, body } from "express-validator";
-import { validate } from "../../middleWares/validate";
+import { validate } from "../../middlewares/validate";
 import { UserModel } from "../user/user.model";
 import slugify from "slugify";
 import validator from "validator";

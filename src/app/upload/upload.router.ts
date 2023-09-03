@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { uploadImage, uploadFile } from "./upload.controller";
-import { uploadDisk, uploadMemory } from "../../middleWares/upload.middleWare";
-import { protectedMiddleware } from "../../middleWares/protected.middleWare";
+import { uploadDisk, uploadMemory } from "../../middlewares/upload.middleWare";
+import { protectedMiddleware } from "../../middlewares/protected.middleware";
 
 const routerUpload = Router();
 

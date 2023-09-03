@@ -1,6 +1,6 @@
 import { Router } from "express";
-import routerUpload from "./src/Controllers/upload/upload.router";
-import routerAuth from "./src/Controllers/auth/auth.router";
+import routerUpload from "./src/app/upload/upload.router";
+import routerAuth from "./src/app/auth/auth.router";
 
 
 const router = Router();
