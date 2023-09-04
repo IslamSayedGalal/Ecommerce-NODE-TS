@@ -2,8 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import expressAsyncHandler from "express-async-handler";
 import nodemailer from "nodemailer";
 
-export const sendEmail = expressAsyncHandler( 
-    async( {email, subject, message}: any)=>{
+export const sendEmail = async( {email, subject, message}: any)=>{
 
     // 1) Create Transporter (Service That Will Send Email like 'Gmail'. 'Mailgun, 'mialtrap', 'sendGrid')
     const transporter = nodemailer.createTransport({
@@ -33,4 +32,3 @@ export const sendEmail = expressAsyncHandler(
         console.log("error")
     }
 }
-)

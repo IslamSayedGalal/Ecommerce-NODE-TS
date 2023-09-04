@@ -19,7 +19,7 @@ export class ApiFeature<T extends Document>{
         limit:number;
     }={ totalPages: 0, page: 0, limit: 0 };
 
-    data: T[] = [];
+    mongoQuery: T[] = [];
     constructor(public mongooseQuery: Query<T[], T>, public queryString: IQuery) { }
 
 
@@ -29,7 +29,6 @@ export class ApiFeature<T extends Document>{
         const excludedFields = ["sort", "limit", "page", "fields", "keyword", "populate"];
 
         excludedFields.forEach((el) => delete queryObject[el]);
-        console.log(excludedFields);
         let queryStr = JSON.stringify(queryObject);
         queryStr = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, (match) => `$${match}`);
         if(this.mongooseQuery){
@@ -77,7 +76,7 @@ export class ApiFeature<T extends Document>{
             page: pageNumber,
             limit: limitNumber,
         };
-        this.data = await this.mongooseQuery;
+        this.mongoQuery = await this.mongooseQuery;
         return this;
     }
 

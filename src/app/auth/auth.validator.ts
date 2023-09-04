@@ -1,5 +1,5 @@
 import { check, body } from "express-validator";
-import { validate } from "../../middlewares/validate";
+import { validate } from "../../middleWares/validate.middleWare";
 import { UserModel } from "../user/user.model";
 import slugify from "slugify";
 import validator from "validator";
@@ -45,19 +45,18 @@ export const registerValidator = [
     .withMessage("is required")
     .isString()
     .withMessage("must be string")
-    .isLength({ min: 6, max: 50 })
-    .withMessage("must be between 6 to 50 characters"),
+    .isLength({ min: 8, max: 50 })
+    .withMessage("must be between 8 to 50 characters"),
   validate,
 ];
 
-// login using  (email or phone)
 export const loginValidator = [
   check("username")
     .notEmpty()
     .withMessage("is required")
     .custom(async (value) => {
       const email = validator.isEmail(value);
-      const phone = validator.isMobilePhone(value,"ar-EG");
+      const phone = validator.isMobilePhone(value, "ar-EG");
       if (!email && !phone) {
         return Promise.reject("not valid format");
       }
@@ -68,7 +67,55 @@ export const loginValidator = [
     .withMessage("is required")
     .isString()
     .withMessage("must be string")
-    .isLength({ min: 6, max: 50 })
-    .withMessage("must be between 6 to 50 characters"),
+    .isLength({ min: 8, max: 50 })
+    .withMessage("must be between 8 to 50 characters"),
+  validate,
+];
+
+export const forgetPasswordValidator = [
+  check("username")
+    .notEmpty()
+    .withMessage("is required")
+    .custom(async (value) => {
+      const email = validator.isEmail(value);
+      const phone = validator.isMobilePhone(value, "ar-EG");
+      if (!email && !phone) {
+        return Promise.reject("not valid format");
+      }
+      return true;
+    }),
+  validate,
+];
+
+export const verifyPasswordResetCodeValidator = [
+  check("resetCode")
+    .notEmpty()
+    .withMessage("is required")
+    .isString()
+    .withMessage("must be string")
+    .isLength({ min: 6, max: 6 })
+    .withMessage("must be 6 characters"),
+  validate,
+];
+
+export const resetPasswordValidator = [
+  check("username")
+    .notEmpty()
+    .withMessage("is required")
+    .custom(async (value) => {
+      const email = validator.isEmail(value);
+      const phone = validator.isMobilePhone(value, "ar-EG");
+      if (!email && !phone) {
+        return Promise.reject("not valid format");
+      }
+      return true;
+    }),
+  check("newPassword")
+    .notEmpty()
+    .withMessage("is required")
+    .isString()
+    .withMessage("must be string")
+    .isLength({ min: 8, max: 50 })
+    .withMessage("must be between 8 to 50 characters"),
   validate,
 ];

@@ -4,7 +4,7 @@ import morgan from "morgan";
 import cors from "cors";
 import "colors";
 import { dbConnection } from "./src/dbConnection/dbConnection";
-import { globalErrorHandler, globalNotFoundRoute } from "./src/middlewares/globalError.middleWare";
+import { globalErrorHandler, globalNotFoundRoute } from "./src/middleWares/globalError.middleWare";
 import router from "./mount";
 dotenv.config({path: "./config/.env"});
 dbConnection();

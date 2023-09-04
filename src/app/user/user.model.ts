@@ -1,4 +1,4 @@
-import { Schema, model } from "mongoose";
+import { Query, Schema, model } from "mongoose";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { Role, UserInterface } from "../../types/user/user.interface";
@@ -30,7 +30,9 @@ const userSchema = new Schema<UserInterface>(
       select: false,
     },
     profileImage: String,
-    passwordChangedAt: Date,
+    passwordChangedAt: {
+      type: Date,
+    },
     role: {
       type: String,
       enum: Object.values(Role),
@@ -71,6 +73,14 @@ userSchema.pre("save", async function (next) {
   this.password = await bcrypt.hash(this.password, +process.env.BCRYPT_SALT);
   next();
 });
+
+
+// userSchema.pre("findOneAndUpdate",async function (this: Query<UserInterface, UserInterface, any>, next) {
+//   if (!this.updateOne().password) return next();
+//   this.updateOne().password = await bcrypt.hash(this.updateOne().password, +process.env.BCRYPT_SALT);
+//   console.log(this.updateOne().password);
+//   next();
+// })
 
 userSchema.methods.comparePassword = async function ( this: UserInterface, password: string) {
   if (!this.password) return false;
