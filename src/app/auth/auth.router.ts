@@ -6,6 +6,7 @@ import {
   verifyPasswordResetCode,
   resetPassword,
   getMe,
+  updateMe,
 } from "./auth.controller";
 import {
   registerValidator,
@@ -35,10 +36,17 @@ routerAuth
   .route("/resetCode")
   .put(resetPasswordValidator, resetPassword);
 
+routerAuth
+  .route("/updateMe")
+  .put(protectedMiddleWare, updateMe);
 
 routerAuth
   .route("/getMe")
   .get(protectedMiddleWare, getMe);
+
+
+
+
 
 
 export default routerAuth;

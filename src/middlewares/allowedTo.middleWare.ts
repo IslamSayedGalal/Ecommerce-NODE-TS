@@ -2,8 +2,8 @@ import { Request, Response, NextFunction } from "express";
 import expressAsyncHandler from "express-async-handler";
 import { matchedData, validationResult } from "express-validator";
 import { ApiError } from "../utils/ApiError";
-import { ReasonPhrases, StatusCodes } from "http-status-codes";
-import {Role} from "../types/user/user.interface";
+import { StatusCodes } from "http-status-codes";
+import { Role} from "../app/user/user.interface";
 
 export const allowedTo = (...roles: Role[]) => {
     return expressAsyncHandler(

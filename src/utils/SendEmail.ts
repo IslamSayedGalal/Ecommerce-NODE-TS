@@ -1,10 +1,14 @@
-import { Request, Response, NextFunction } from "express";
-import expressAsyncHandler from "express-async-handler";
 import nodemailer from "nodemailer";
+import { SendEmailInterface } from "../types/sendEmail/SendEmail.interface";
 
-export const sendEmail = async( {email, subject, message}: any)=>{
 
-    // 1) Create Transporter (Service That Will Send Email like 'Gmail'. 'Mailgun, 'mialtrap', 'sendGrid')
+export const sendEmail = async( data : SendEmailInterface)=>{
+
+    // 1) destruction Data
+    const {email, subject, message} = data;
+
+
+    // 2) Create Transporter 
     const transporter = nodemailer.createTransport({
       host: process.env.EMAIL_HOST,
       port: Number(process.env.EMAIL_PORT),
@@ -13,22 +17,23 @@ export const sendEmail = async( {email, subject, message}: any)=>{
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASSWORD,
       },
+      tls: {
+        rejectUnauthorized: false,
+      },
     });
 
 
-    // 2) Define Email Options (Like From, To, Subject, Email Content)
+    // 3) Define Email Options (Like From, To, Subject, Email Content)
     const mailOption = {
-        from: 'E-Commerce',
+        from: '"Islam Galal 👻" <eslamgalal0312@gmail.com>',
         to: email,
         subject: subject,
         text: message,
     };
 
-    // Send Email
-    // await transporter.sendMail(mailOption);
-    try {
-        await transporter.sendMail(mailOption);
-    } catch (err) {
-        console.log("error")
-    }
+    // 4) Send Email
+    await transporter.sendMail(mailOption);
 }
+
+
+

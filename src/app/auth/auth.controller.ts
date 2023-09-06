@@ -6,6 +6,7 @@ import { UserModel } from "../user/user.model";
 // import { response } from "../../utils/Response";
 import { ApiError } from "../../utils/ApiError";
 import { sendEmail } from "../../utils/SendEmail";
+import { sendSMS } from "../../utils/sendSMS";
 import {
   RegisterInterface,
   LoginInterface,
@@ -91,7 +92,7 @@ export const forgetPassword = expressAsyncHandler(
     // Save Hashed Password Reset Code Into DataBase
     user.passwordResetCode = hashedResetCode;
 
-    // Add Expiration Time For Code Reset Password (5 min)
+    // Add Expiration Time For Code Reset Password (10 min)
     user.passwordResetExpires = new Date(Date.now() + 10 * 60 * 1000);
     user.passwordResetVerified = false;
 
@@ -100,37 +101,68 @@ export const forgetPassword = expressAsyncHandler(
     // 3) send the reset code via email
     const messageBody = `Hi ${
       user.name.split(" ")[0]
-    },\n Verification Code (${resetCode})`;
+    },\nVerification Code (${resetCode})`;
 
-    // Send Email
-    try {
-      await sendEmail({
-        email: user.email,
-        subject: "Your Code For Reset Password (Valid For 5 min)",
-        message: messageBody,
-      });
-    } catch (err) {
-      user.passwordResetCode = undefined;
-      user.passwordResetExpires = undefined;
-      user.passwordResetVerified = undefined;
+    // If Email Else Phone
+    let messageResponse = "";
+    if(username.includes('@')){
+      // 1) Send Email
+      messageResponse = "Code Send Successfully, Check Your Email";
+      try {
+        await sendEmail({
+          email: username,
+          subject: "Your Code For Reset Password (Valid For 10 min)",
+          message: messageBody,
+        });
+        
+      } catch (err) {
+        user.passwordResetCode = undefined;
+        user.passwordResetExpires = undefined;
+        user.passwordResetVerified = undefined;
+  
+        await user.save();
+        return next(
+          new ApiError(
+            "There Is An Error In Sending Email",
+            StatusCodes.BAD_REQUEST
+          )
+        );
+      }
+    }
+    else {
+      // 2) Send SMS
+      messageResponse = "Code Send Successfully, Check Your SMS";
+      try {
+        await sendSMS({
+          from: "Reusable Store",
+          to: req.body.phone,
+          text: messageBody,
+        });
+      } catch (err) {
+        user.passwordResetCode = undefined;
+        user.passwordResetExpires = undefined;
+        user.passwordResetVerified = undefined;
 
-      await user.save();
-      return next(
-        new ApiError(
-          "There Is An Error In Sending Email",
-          StatusCodes.BAD_REQUEST
-        )
-      );
+        await user.save();
+        return next(
+          new ApiError(
+            "There Is An Error In Sending SMS",
+            StatusCodes.BAD_REQUEST
+          )
+        );
+      }
     }
 
+
     res.status(StatusCodes.OK).json({
-      message: "Code Send Successfully",
+      message: messageResponse,
       data: {
         email: user.email
       },
     });
   }
 );
+
 
 export const verifyPasswordResetCode = expressAsyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -160,7 +192,7 @@ export const verifyPasswordResetCode = expressAsyncHandler(
     await user.save();
 
     res.status(StatusCodes.OK).json({
-      message: "Verified",
+      message: "Verified, Thank You",
       data: {
         email: user.email
       },
@@ -210,6 +242,21 @@ export const resetPassword = expressAsyncHandler(
   }
 );
 
+export const updateMe  = expressAsyncHandler(
+  async(req: Request, res: Response, next: NextFunction)=>{
+    const user = await UserModel.findByIdAndUpdate(
+      req.user._id,
+      req.body, 
+      { new: true }
+    ); 
+    res.status(StatusCodes.OK).json({
+      message: "Update Me Successfully",
+      data: {
+        user
+      },
+    });
+  }
+)
 
 export const getMe = expressAsyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
